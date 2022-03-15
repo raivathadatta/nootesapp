@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "491654680256",
+    "project_id": "trysignin-5f329",
+    "storage_bucket": "trysignin-5f329.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:491654680256:android:5d1023f979a8138f212725",
+        "android_client_info": {
+          "package_name": "com.example.googlesineintry"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "491654680256-fuse5dlf2224dh1mi42vijsui444iv45.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIS0nzB1f6cYF1qWCvlwyznk3ZsMRvwqk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "491654680256-fuse5dlf2224dh1mi42vijsui444iv45.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
