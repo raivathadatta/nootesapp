@@ -3,49 +3,40 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:googlesineintry/models/note.dart';
 import 'package:googlesineintry/resorces/authentication.dart';
+import 'package:googlesineintry/resorces/local_data_bace.dart';
 import 'package:googlesineintry/screens/keep-notes/createnotes_view.dart';
+import 'package:googlesineintry/screens/keep-notes/searchview_screen.dart';
 import 'package:googlesineintry/widgets/keetnotes/sidebar_screen.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:googlesineintry/thems.dart';
 
-import '../models/note.dart';
+import '../../widgets/keetnotes/textcontainer.dart';
+
 // import '../models/note_model.dart';
-import '../resorces/local_data_bace.dart';
-import '../widgets/keetnotes/search_bar.dart';
 
-import '../widgets/keetnotes/textcontainer.dart';
-import 'keep-notes/note_screen.dart';
-import 'keep-notes/searchview_screen.dart';
-
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class ArchiveScreen extends StatefulWidget {
+  const ArchiveScreen({Key? key}) : super(key: key);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _ArchiveScreenState createState() => _ArchiveScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _ArchiveScreenState extends State<ArchiveScreen> {
   bool isLoading = false;
   List<Note> notesList = [];
-
-  List<Note> pinList = [];
   GlobalKey<ScaffoldState> drawerKey = GlobalKey();
 
-  static bool isView = true;
+  static bool isView = false;
 
   @override
   void initState() {
     super.initState();
-    // createEntry(Note(
-    //   pin: false,
-    //   title: "one",
-    //   content: "This iss int the content section",
-    //   createdTime: DateTime.now(),
-    // ));
+
     getAllNotes();
 
-    getAllNotesDATABACE();
+    // getAllNotesDATABACE();
   }
 
   /////////////////////notable to add pinn and archive
@@ -64,15 +55,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future getAllNotes() async {
-    notesList = await NotesDatabase.instance.readAllNotes();
-
-    // setState(() {
-    //   isLoading = false;
-    // });
-
-    notesList.forEach((element) {
-      if (element.pin) {
-        pinList.add(element);
+    List<Note> archivelist = await NotesDatabase.instance.readAllNotes();
+    archivelist.forEach((element) {
+      if (element.isArchieve) {
+        notesList.add(element);
       }
     });
   }
@@ -130,23 +116,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   searchBar(),
                   // listSectionAll(),
-                  pinList.isNotEmpty
-                      ? !isView
-                          ? listSectionAll()
-                          : noteSectionAll(pinList)
-                      : noteSectionAll(pinList),
 
-                  Expanded(
-                      child: !isView
-                          ? listSectionAll()
-                          : noteSectionAll(notesList))
+                  Expanded(child: !isView ? listSectionAll() : noteSectionAll())
                 ],
               )),
             ));
   }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-  noteSectionAll(List<Note> notesList) {
+  noteSectionAll() {
     return Padding(
       padding: const EdgeInsets.all(0),
       child: StaggeredGridView.countBuilder(

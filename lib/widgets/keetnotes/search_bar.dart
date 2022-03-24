@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // import 'package:googlesineintry/resorces/Authentication.dart';
 import 'package:googlesineintry/resorces/authentication.dart';
 
+import '../../screens/keep-notes/searchview_screen.dart';
 import '../../thems.dart';
 
 class SearchBar extends StatefulWidget {
@@ -13,7 +14,8 @@ class SearchBar extends StatefulWidget {
 }
 
 class _SearchBarState extends State<SearchBar> {
-  // static final GlobalKey<ScaffoldState> drawerKey = GlobalKey();
+  GlobalKey<ScaffoldState> drawerKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -21,8 +23,6 @@ class _SearchBarState extends State<SearchBar> {
         Container(
           padding: const EdgeInsets.only(right: 10),
           margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 1),
-          // width: MediaQuery.of(context).size.width,
-          // width: 300,
           height: 55,
           decoration: BoxDecoration(
               color: cardColor,
@@ -36,8 +36,9 @@ class _SearchBarState extends State<SearchBar> {
               Row(
                 children: [
                   IconButton(
-                      onPressed: () =>
-                          AuthMethods.drawerKey.currentState!.openDrawer(), //
+                      onPressed: () => drawerKey.currentState!
+                          .openDrawer(), //.currentState!.openDrawer();
+                      //
                       icon: Icon(
                         Icons.menu,
                         color: Colors.white.withOpacity(0.3),
@@ -45,21 +46,27 @@ class _SearchBarState extends State<SearchBar> {
                   const SizedBox(
                     width: 8,
                   ),
-                  Container(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text(
-                          "Search or notes",
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
-                      ],
+                  InkWell(
+                    onTap: (() {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SearchView()));
+                    }),
+                    child: SizedBox(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text(
+                            "Search or notes",
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      height: 65,
+                      width: 190,
                     ),
-                    height: 55,
-                    width: 190,
-                    decoration:
-                        BoxDecoration(border: Border.all(color: Colors.white)),
                   )
                 ],
               ),
@@ -71,7 +78,9 @@ class _SearchBarState extends State<SearchBar> {
                 child: Row(
                   children: [
                     TextButton(
-                        onPressed: () {}, //add  code
+                        onPressed: () {
+                          //  AuthMethods.checkStateGrid();
+                        }, //add  code
 
                         style: ButtonStyle(
                             overlayColor: MaterialStateColor.resolveWith(

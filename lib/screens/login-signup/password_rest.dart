@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:googlesineintry/resorces/authentication.dart';
 // import 'package:googlesineintry/screens/loginscree.dart';
-import 'package:googlesineintry/widgets/textWidgert.dart';
+import 'package:googlesineintry/widgets/login-signup/textfeldInput.dart';
 
 import 'login_scree.dart';
 

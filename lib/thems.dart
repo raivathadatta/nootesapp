@@ -8,6 +8,7 @@ const kZambeziColor = Color(0xFF5B5B5B);
 const kBlackColor = Color(0xFF272726);
 const kTextFieldColor = Color(0xFF979797);
 const bgColor = Colors.black;
+const white = Colors.white;
 const cardColor = Color(0xFF2D2E33);
 const kDefaultPadding = EdgeInsets.symmetric(horizontal: 30);
 

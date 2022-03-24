@@ -1,32 +1,96 @@
 // ignore_for_file: deprecated_member_use
 
-// import 'package:flutter/cupertino.dart';
+import 'dart:core';
+import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:googlesineintry/resorces/authentication.dart';
 import 'package:googlesineintry/resorces/auth_exceptions.dart';
-// import 'package:googlesineintry/widgets/pop_up.dart';
-import 'package:googlesineintry/widgets/show_error.dart';
-import 'package:googlesineintry/widgets/textWidgert.dart';
+import 'package:googlesineintry/thems.dart';
+import '../../resorces/Authentication.dart';
+import '../../widgets/login-signup/textfeldInput.dart';
+import '../../widgets/show_error.dart';
+import '../../widgets/login-signup/textfeldInput.dart';
+import 'login_scree.dart';
+// import 'loginscree.dart';
 
-// import '../screens/loginscree.dart';
-
-class SignUpForm extends StatefulWidget {
-  const SignUpForm({Key? key}) : super(key: key);
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({Key? key}) : super(key: key);
 
   @override
-  State<SignUpForm> createState() => _SignUpFormState();
+  _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class _SignUpFormState extends State<SignUpForm> {
+class _SignUpScreenState extends State<SignUpScreen> {
   final namecontroller = TextEditingController();
+  var lastnamecontroller = TextEditingController();
   final _password = TextEditingController();
   final _mail = TextEditingController();
 
   final _phoneNumber = TextEditingController();
 
-  var lastnamecontroller = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+        body: SingleChildScrollView(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      const SizedBox(
+        height: 70,
+      ),
+      Padding(
+        padding: kDefaultPadding,
+        child: Text(
+          'Create Account',
+          style: titleText,
+        ),
+      ),
+      const SizedBox(
+        height: 5,
+      ),
+      Padding(
+        padding: kDefaultPadding,
+        child: Row(
+          children: [
+            Text(
+              'Already a member?',
+              style: subTitle,
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => const LoginIn()));
+              },
+              child: Text(
+                'Log In',
+                style: textButton.copyWith(
+                  decoration: TextDecoration.underline,
+                  decorationThickness: 1,
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+
+      // padding: const EdgeInsets.all(8.0),
+
+      const SizedBox(
+        height: 10,
+      ),
+
+      Padding(
+        padding: kDefaultPadding,
+        child: signUpHear(), ////
+      ),
+      const SizedBox(
+        height: 20,
+      ),
+    ])));
+  }
+
+  signUpHear() {
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,15 +208,14 @@ class _SignUpFormState extends State<SignUpForm> {
 
   signUP() async {
     try {
-      ShowError.showError("succfull", context);
+      log("message");
       await AuthMethods.signUp(
-        email: _mail.text,
-        password: _password.text,
-        firstname: namecontroller.text,
-        lastname: lastnamecontroller.text,
-        phone: _phoneNumber.text,
-      );
-      ShowError.popUp("Week Password", context);
+          email: _mail.text,
+          password: _password.text,
+          firstname: namecontroller.text,
+          lastname: lastnamecontroller.text,
+          phone: _phoneNumber.text);
+      ShowError.popUp("Succfull", context);
     } on WeakPasswordAuthException catch (_) {
       ShowError.showError("Week Password", context);
     } on EmailAlreadyInUseAuthException catch (_) {
@@ -162,6 +225,7 @@ class _SignUpFormState extends State<SignUpForm> {
     } on GenericAuthException catch (_) {
       ShowError.showError("SOME THING WENT WRONG", context);
     } catch (err) {
+      log(err.toString());
       ShowError.showError(err.toString(), context);
     }
   }

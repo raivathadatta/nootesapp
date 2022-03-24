@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 
-import '../thems.dart';
+import '../../thems.dart';
 
 class TextFeldInput extends StatelessWidget {
   final TextEditingController textEditingController;
   final bool ispass;
   final String hint;
   final TextInputType type;
-  final Icon icon;
+  final Icon? icon;
+  final TextStyle? hintStyle;
+
+  final Function(String)? getfunction;
+
   const TextFeldInput(
       {Key? key,
       required this.textEditingController,
       required this.hint,
       required this.ispass,
       required this.type,
-      required this.icon})
+      this.icon,
+      this.hintStyle,
+      this.getfunction})
       : super(key: key);
 
   @override
@@ -32,11 +38,15 @@ class TextFeldInput extends StatelessWidget {
           child: TextField(
             // decoration: const InputDecoration(),
             controller: textEditingController,
+
+            onChanged: getfunction,
+
             keyboardType: type,
             obscureText: ispass,
             decoration: InputDecoration(
               contentPadding: const EdgeInsets.symmetric(vertical: 13.0),
               hintText: hint,
+              hintStyle: hintStyle,
               prefixIcon: icon,
               labelStyle: const TextStyle(
                 color: kTextFieldColor,

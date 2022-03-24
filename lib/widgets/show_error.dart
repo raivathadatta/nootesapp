@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../screens/login_scree.dart';
+import '../screens/login-signup/login_scree.dart';
 
 class ShowError {
+  // ShowError(String s);
+
   static showError(String e, BuildContext context) {
     // ignore: dead_code
     return showDialog(

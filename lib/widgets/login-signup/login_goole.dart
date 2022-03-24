@@ -4,7 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googlesineintry/widgets/show_error.dart';
 
-import '../screens/home_screen.dart';
+import '../../screens/home_screen.dart';
 
 class LoginInGoole extends StatefulWidget {
   const LoginInGoole({Key? key}) : super(key: key);
@@ -42,7 +42,7 @@ class _LoginInGooleState extends State<LoginInGoole> {
         // ShowError.showError(user.toString(), context);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => DisplatScreen()),
+          MaterialPageRoute(builder: (context) => HomeScreen()),
         );
       } on FirebaseAuthException catch (e) {
         if (e.code == 'account-exists-with-different-credential') {
@@ -54,35 +54,6 @@ class _LoginInGooleState extends State<LoginInGoole> {
         ShowError.showError(e.toString(), context);
       }
     }
-    // debugPrint("in print");
-    // GoogleSignIn googleSignIn = GoogleSignIn();
-
-    // GoogleSignInAccount? User = await googleSignIn.signIn();
-    // // debugPrint("in");
-
-    // if (User != null) {
-    //   GoogleSignInAuthentication googleAuth = await User.authentication;
-
-    //   if (googleAuth.accessToken != null) {
-    //     final AuthCredential credential = GoogleAuthProvider.credential(
-    //         accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
-
-    //     var _auth = FirebaseAuth.instance;
-    //     try {
-    //       final UserCredential user =
-    //           await _auth.signInWithCredential(credential);
-    //       await storage.write(key: 'uid', value: user.user?.uid);
-
-    //     } catch (e) {
-    //       ShowError.showError(e.toString(), context);
-    //     }
-    //     // return user;
-    //   } else {
-    //     ShowError.showError('Missing Google Auth Token', context);
-    //   }
-    // } else {
-    //   ShowError.showError('Sign in Aborted', context);
-    // }
   }
 
   @override

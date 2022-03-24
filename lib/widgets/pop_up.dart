@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../screens/login_scree.dart';
+import '../screens/login-signup/login_scree.dart';
 
 // import '../screens/loginscree.dart';
 
