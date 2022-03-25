@@ -28,8 +28,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool isLoading = false;
   List<Note> notesList = [];
-
-  List<Note> pinList = [];
+  List<Note> notelist = [];
+  // List<Note> pinList = [];
   GlobalKey<ScaffoldState> drawerKey = GlobalKey();
 
   static bool isView = true;
@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
     //   content: "This iss int the content section",
     //   createdTime: DateTime.now(),
     // ));
-    getAllNotes();
+    // getAllNotes();
 
     getAllNotesDATABACE();
   }
@@ -61,6 +61,18 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       notesList = newl;
     });
+    /////////////////////////////////////
+    // notesList.forEach((element) {
+    //   if (element.pin) {
+    //     pinList.add(element);
+    //   }
+    // });
+    ///////////////////////////////////////
+    notesList.forEach((element) {
+      if (!element.pin) {
+        notelist.add(element);
+      }
+    });
   }
 
   Future getAllNotes() async {
@@ -69,12 +81,6 @@ class _HomeScreenState extends State<HomeScreen> {
     // setState(() {
     //   isLoading = false;
     // });
-
-    notesList.forEach((element) {
-      if (element.pin) {
-        pinList.add(element);
-      }
-    });
   }
 
   Future findNodeById(int id) async {
@@ -128,25 +134,25 @@ class _HomeScreenState extends State<HomeScreen> {
               child: SafeArea(
                   child: Column(
                 children: [
-                  searchBar(),
+                  searchBar(), ///////////////////set in appbar
                   // listSectionAll(),
-                  pinList.isNotEmpty
-                      ? !isView
-                          ? listSectionAll()
-                          : noteSectionAll(pinList)
-                      : noteSectionAll(pinList),
+
+                  // pinList.isNotEmpty
+                  //     ? !isView
+                  //         ? Expanded(child: listSectionAll())
+                  //         : Expanded(child: noteSectionAll(pinList))
+                  //     : Expanded(child: noteSectionAll(pinList)),
 
                   Expanded(
-                      child: !isView
-                          ? listSectionAll()
-                          : noteSectionAll(notesList))
+                      child:
+                          !isView ? listSectionAll() : noteSectionAll(notelist))
                 ],
               )),
             ));
   }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-  noteSectionAll(List<Note> notesList) {
+  noteSectionAll(List<Note> list) {
     return Padding(
       padding: const EdgeInsets.all(0),
       child: StaggeredGridView.countBuilder(
@@ -159,9 +165,9 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisCount: 4,
           staggeredTileBuilder: (index) => StaggeredTile.fit(2),
           itemBuilder: (context, index) => TextContainer(
-                heading: notesList[index].title!,
+                heading: notelist[index].title!,
                 index: index,
-                note: notesList[index].content,
+                note: notelist[index].content,
                 noteData: notesList[index],
               )),
     );

@@ -44,7 +44,6 @@ class MyApp extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             } else {
-              log(snapshot.toString() + "jhgsiguhsifhsiufhifhiuwrhfiuh");
               return const HomeScreen();
             }
           },

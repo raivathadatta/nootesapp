@@ -22,52 +22,41 @@ class SearchView extends StatefulWidget {
 
 class _SearchViewState extends State<SearchView> {
   // get textEditingController => null;
-  List<int> searchResultIDs = [];
+  // List<int> searchResultIDs = [];
   List<Note?> searchResultNotes = [];
-  List<Note> listId = [];
+  List<Note> notesList = [];
 
   bool isLoading = false;
+  // List<Note?> SearchResultNotesLocal = [];
+
+  @override
+  void initState() {
+    searchResultNotes.clear(); // TODO: implement initState
+    super.initState();
+    DataBaseFunctionalty.getAllNodes().then((value) {
+      setState(() {
+        notesList = value;
+      });
+    });
+  }
   // final searchController = TextEditingController();
 
-  void searchresults(String query) async {
+// listId = ;
+  void searchResults(String searValue) async {
     searchResultNotes.clear();
-    listId.clear();
 
-    // setState(() {
-    //   isLoading = true;
-    // });
-
-    // if (await NotesDatabase.instance.getNotesString(query) != null) {
-    // listId = (await NotesDatabase.instance.getNotesString(query))!;////for localData
-
-    listId = await DataBaseFunctionalty.getAllNodes();
-
-    // }
-    log(listId.length.toString() + "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-
-    log("GEL");
-
-    List<Note?> SearchResultNotesLocal = [];
-    listId.forEach((element) async {
-      // final SearchNote = await NotesDatabase.instance.findNoteById(element);
-      // final SearchNote = await AuthMethods.getUserById(element);
-
-      if (query != "") {
-        listId.forEach((item) {
-          if (item.title!.contains(query) || item.content.contains(query)) {
-            log(item.title!);
-            setState(() {
-              SearchResultNotesLocal.add(item);
-              log(searchResultNotes.length.toString());
-            });
-          }
-        });
-      }
-      // SearchResultNotesLocal.add(SearchNote);
-      // setState(() {
-      //   searchResultNotes.add(SearchNote);
-      // });
-    });
+    if (searValue != "") {
+      notesList.forEach((item) {
+        if (item.title!.contains(searValue) ||
+            item.content.contains(searValue)) {
+          log(item.title!);
+          setState(() {
+            searchResultNotes.add(item);
+            log(searchResultNotes.length.toString());
+          });
+        }
+      });
+    }
   }
 
   @override
@@ -104,7 +93,7 @@ class _SearchViewState extends State<SearchView> {
                               color: white.withOpacity(0.5), fontSize: 16),
                         ),
                         onChanged: (value) {
-                          searchresults(value.toLowerCase().trim());
+                          searchResults(value.toLowerCase().trim());
                           log(value);
                         },
                       ),

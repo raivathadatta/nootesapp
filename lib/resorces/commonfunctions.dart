@@ -10,7 +10,7 @@ class DataBaseFunctionalty {
   static saveNote(Note note) async {
     log("added");
 
-    await NotesDatabase.instance.InsertEntry(note);
+    // await NotesDatabase.instance.InsertEntry(note);
     // log(newNote.id.toString());
     // log("add Succfully");
     await AuthMethods.saveNote(note);
@@ -18,7 +18,7 @@ class DataBaseFunctionalty {
 
   static updateNotes(Note note) async {
     // await AuthMethods.saveNote(note);
-    await AuthMethods.updateNoteFirestore(note);
+    // await AuthMethods.updateNoteFirestore(note);
     await NotesDatabase.instance.updateNote(note);
     log("Updated Succfully");
   }
@@ -35,8 +35,8 @@ class DataBaseFunctionalty {
     log("Deleted Succfully");
   }
 
-  static getAllNodes() async {
+  static Future<List<Note>> getAllNodes() async {
     log("one");
-    return AuthMethods.getAllNotesFromFireStore();
+    return await AuthMethods.getAllNotesFromFireStore();
   }
 }

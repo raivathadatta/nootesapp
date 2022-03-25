@@ -177,7 +177,7 @@ class AuthMethods {
   }
 
   static getAllNotes() async {
-    await await users.doc(userID).collection("NoteData").get().then((value) {
+    await users.doc(userID).collection("NoteData").get().then((value) {
       for (var element in value.docs) {
         Map note = element.data();
         NotesDatabase.instance
@@ -196,29 +196,46 @@ class AuthMethods {
 
   static Future<List<Note>> getAllNotesFromFireStore() async {
     log("///////////////////////////////////////////////////////////////////////////////////////////;");
+    log(userID);
     List<Note> notes = [];
     try {
-      await users
-          .doc(userID)
-          .collection("NoteData")
-          .get()
-          .then((querySnapshot) {
-        for (var result in querySnapshot.docs) {
-          Map<String, dynamic> tempNote = result.data();
+      final querySnapshot =
+          await users.doc(userID).collection("NoteData").get();
 
-          notes.add(Note(
-            pin:
-                false, ////////////////////////////////////////////////////////////////////////////////////////
-            isArchieve:
-                false, /////////////////////////////pin : tempNote['pin'] as bool is not workimg /////////////////////////////////not qable to assain these values
-            title: tempNote['title'] as String,
-            content: tempNote['content'] as String,
-            id: tempNote['id'] as String,
-            // createdTime: tempNote['createdTime']
-          ));
-        }
-      });
+      for (var result in querySnapshot.docs) {
+        log("in side for");
+        Map<String, dynamic> tempNote = result.data();
 
+        notes.add(Note(
+          pin: tempNote[
+              'pin'], ///////////////////////////////////////////////////// ///////////////////////////////////
+          isArchieve:
+              false, /////////////////////////////pin : tempNote['pin'] as bool is not workimg /////////////////////////////////not qable to assain these values
+          title: tempNote['title'] as String,
+          content: tempNote['content'] as String,
+          id: tempNote['id'] as String,
+          // createdTime: tempNote['createdTime']
+        ));
+      }
+
+      // .then((querySnapshot) {
+      //   for (var result in querySnapshot.docs) {
+      //     log("in side for");
+      //     Map<String, dynamic> tempNote = result.data();
+
+      //     notes.add(Note(
+      //       pin: tempNote[
+      //           'pin'], ////////////////////////////////////////////////////////////////////////////////////////
+      //       isArchieve:
+      //           false, /////////////////////////////pin : tempNote['pin'] as bool is not workimg /////////////////////////////////not qable to assain these values
+      //       title: tempNote['title'] as String,
+      //       content: tempNote['content'] as String,
+      //       id: tempNote['id'] as String,
+      //       // createdTime: tempNote['createdTime']
+      //     ));
+      //   }
+      // });
+      log("before return");
       return notes;
     } catch (e) {
       log(e.toString());
