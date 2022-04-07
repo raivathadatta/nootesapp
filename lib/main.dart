@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:googlesineintry/resorces/notification_managers.dart';
 
 import 'package:googlesineintry/screens/home_screen.dart';
 import 'package:googlesineintry/screens/login-signup/login_scree.dart';
@@ -9,7 +8,6 @@ import 'package:googlesineintry/screens/login-signup/login_scree.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-
   runApp(const MyApp());
 }
 

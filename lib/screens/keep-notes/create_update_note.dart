@@ -111,7 +111,7 @@ class _CreateUpdateNoteState extends State<CreateUpdateNote> {
               showModalBottomSheet(
                   context: context,
                   builder: (BuildContext context) {
-                    return NotificationScreen(widget.note);
+                    return NotificationScreen();
                   });
             },
           ),

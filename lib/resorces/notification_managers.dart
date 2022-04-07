@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:googlesineintry/models/note.dart';
 
 class NotificationManager {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -42,11 +43,10 @@ class NotificationManager {
         ));
   }
 
-  Future callNotificationAfterDelay(DateTime date, TimeOfDay timeOfDay) async {
-    var scheduleNotificationDateTime =
-        date.add(Duration(hours: timeOfDay.hour, minutes: timeOfDay.minute));
+  Future callNotificationAfterDelay(DateTime? date, Note? note) async {
+    var scheduleNotificationDateTime = date;
 
-    log(date.toString() + timeOfDay.toString());
+    // log(date.toString() + timeOfDay.toString());
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
         'high_channel', 'High Importance Notification',
         description: "This channel is for important notification",
@@ -55,9 +55,9 @@ class NotificationManager {
     // ignore: deprecated_member_use
     await flutterLocalNotificationsPlugin.schedule(
         0,
-        'Test Title',
-        'Test Body',
-        scheduleNotificationDateTime,
+        note?.title,
+        note?.content,
+        scheduleNotificationDateTime!,
         NotificationDetails(
           android: AndroidNotificationDetails(channel.id, channel.name,
               channelDescription: channel.description),

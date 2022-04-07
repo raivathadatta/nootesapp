@@ -1,154 +1,122 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:googlesineintry/models/note.dart';
 import 'package:googlesineintry/resorces/notification_managers.dart';
 import 'package:googlesineintry/thems.dart';
 
 class NotificationScreen extends StatefulWidget {
-  const NotificationScreen(Note? note, {Key? key}) : super(key: key);
+  Note? note;
+
+  NotificationScreen({Key? key, this.note}) : super(key: key);
+  // Note? note;
 
   @override
   State<NotificationScreen> createState() => _NotificationScreenState();
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  TimeOfDay selectedTime = TimeOfDay.now();
-
   // DateTime timeSelected =
 
-  DateTime selectedDate = DateTime.now();
+  DateTime? selectedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
     return Container(
+        padding: const EdgeInsets.only(top: 30),
         color: const Color(0xff757575),
         child: Container(
-          padding: const EdgeInsets.all(0),
+          padding: const EdgeInsets.only(top: 20),
           decoration: const BoxDecoration(
-            color: white,
+            color: bgColor,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+            // BorderRadius.only(topLeft: Radius.circular(10)),
           ),
-          // borderRadius: BorderRadius.only(
-          // topLeft: Radius.circular(10), topRight: Radius.circular(10))),
           child: Column(
             children: [
               Container(
-                margin: EdgeInsets.all(30),
-                decoration: const BoxDecoration(color: Colors.grey),
+                alignment: Alignment.center,
+                padding: const EdgeInsets.only(right: 20, left: 10),
+                margin: const EdgeInsets.all(10),
+                // color: Colors.blue,
+                height: 40,
                 width: double.maxFinite,
-                child: Column(
-                  children: [
-                    const Text(" select date "),
-                    Container(
-                      height: 50,
-                      decoration: const BoxDecoration(color: Colors.black),
-                      width: double.maxFinite,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        // crossAxisAlignment: CrossAxisAlignment.baseline,
-                        children: [
-                          Container(
-                            width: 80,
-                            height: 40,
-                            child: NotificationClick(
-                              getFunction:
-                                  selectDate, ////////////////////add function for create notification
-                              title: "select date ",
-                            ),
-                          ),
-                          Container(
-                            width: 80,
-                            height: 40,
-                            color: Color.fromARGB(255, 138, 62, 62),
-                            child: NotificationClick(
-                              getFunction:
-                                  selectTime, ////////////////////add function for create notification
-                              title: " time ",
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(10),
-                      width: 150,
-                      height: 40,
-                      color: Colors.blue,
-                      child: InkWell(
-                        child: const Text(
-                          "shedule notification",
-                          style: TextStyle(
-                              color: white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        onTap: () {
-                          if (selectedDate != null && selectedTime != null) {
-                            NotificationManager().callNotificationAfterDelay(
-                                selectedDate, selectedTime);
-                          } else {
-                            const Text("plese select both");
-                          }
-                        },
-                      ),
-                    ),
-                  ],
+                decoration: const BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                child: InkWell(
+                  onTap: selectedDateandTime,
+                  child: const Text(
+                    "shedule ",
+                    style: TextStyle(color: white, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
-              const NotificationClick(
-                getFunction: null, /////// add function for delete notification
-                title: 'delete notification ',
-              ),
-              const SizedBox(height: 12),
-              NotificationClick(
-                title: 'shedule for today',
-                getFunction: selectTime,
+              Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.only(right: 20, left: 10),
+                margin: const EdgeInsets.all(10),
+                width: double.maxFinite,
+                height: 40,
+                decoration: const BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                child: InkWell(
+                  child: const Text(
+                    "shedule notification",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  onTap: () {
+                    NotificationManager()
+                        .callNotificationAfterDelay(selectedDate, widget.note);
+                    Navigator.pop(context);
+                  },
+                ),
               ),
             ],
           ),
         ));
   }
 
-  Future<void> selectDate() async {
-    log("1");
-    final DateTime? selected = await showDatePicker(
-      context: context,
-      // selectableDayPredicate:true;
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2010),
-      lastDate: DateTime(2025),
-    );
-    // selected!.hour = 2;
-    log(selected!.hour.toString() + "2222222");
-    if (selected != selectedDate) {
-      setState(() {
-        selectedDate = selected;
-        // selected.hour = selectedTime.hour;
-        // selected.minute = selectedTime.minute;
-      });
-      // selectedDate.hour = selectedTime.hour;
-    }
+  Future<void> selectedDateandTime() async {
+    DateTime? date = await selectDate();
+    if (date == null) return;
+    TimeOfDay? time = await selectTime();
+    if (time == null) return;
+
+    final DateTime? dateTime =
+        DateTime(date.year, date.month, date.day, time.hour, time.minute);
+
+    selectedDate = dateTime;
   }
 
-  Future<void> selectTime() async {
-    final TimeOfDay? timeOfDay = await showTimePicker(
-      context: context,
-      initialTime: selectedTime,
-      initialEntryMode: TimePickerEntryMode.dial,
-    );
+  Future<DateTime?> selectDate() => showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2010),
+        lastDate: DateTime(2025),
+      );
 
-    if (timeOfDay != null && timeOfDay != selectedTime) {
-      setState(() {
-        selectedTime = timeOfDay;
-      });
-    }
-  }
-
-  // selectDateandTime() async {
-  //   await selectDate();
-  //   await selectTime();
-  // }
+  Future<TimeOfDay?> selectTime() => showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+        initialEntryMode: TimePickerEntryMode.dial,
+      );
 }
+
+// selectDateandTime() async {
+//   await selectDate();
+//   await selectTime();
+// }
 
 class NotificationClick extends StatelessWidget {
   // ignore: prefer_typing_uninitialized_variables
