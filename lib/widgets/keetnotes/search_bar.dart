@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 // import 'package:googlesineintry/resorces/Authentication.dart';
 import 'package:googlesineintry/resorces/authentication.dart';
 
-import '../../screens/keep-notes/searchview_screen.dart';
+import '../../screens/keep-notes/search_screen.dart';
 import '../../thems.dart';
 
 class SearchBar extends StatefulWidget {
@@ -51,7 +51,7 @@ class _SearchBarState extends State<SearchBar> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const SearchView()));
+                              builder: (context) => const SearchScreen()));
                     }),
                     child: SizedBox(
                       child: Column(

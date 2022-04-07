@@ -12,6 +12,19 @@ const white = Colors.white;
 const cardColor = Color(0xFF2D2E33);
 const kDefaultPadding = EdgeInsets.symmetric(horizontal: 30);
 
+const mainAxixAlinementSpaceing = 12.0;
+
+const crossAxisAlignmentSpacing = 12.0;
+
+const crossAxisCountnumber = 2;
+
+const listCount = 10;
+
+const isTrue = true;
+// const splach
+
+// const List<Node> pinList = [];
+
 TextStyle titleText = const TextStyle(
     color: kPrimaryColor, fontSize: 32, fontWeight: FontWeight.w700);
 TextStyle subTitle = const TextStyle(

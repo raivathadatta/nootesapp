@@ -22,12 +22,9 @@ class LoginIn extends StatefulWidget {
 }
 
 class _LoginInState extends State<LoginIn> {
-  bool _isObscure = true;
-
   final emailController = TextEditingController();
 
   var passwordController = TextEditingController();
-  // Future<UserCredential>
 
   @override
   Widget build(BuildContext context) {
@@ -94,12 +91,10 @@ class _LoginInState extends State<LoginIn> {
               height: 12,
             ),
 
-            loginForm(), /////////add amethod and place hear
-
+            loginForm(),
             const SizedBox(
               height: 8,
             ),
-            //forgetpassword
 
             Row(
               mainAxisAlignment: MainAxisAlignment.end,

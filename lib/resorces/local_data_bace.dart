@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
 import 'package:googlesineintry/models/note.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -30,11 +29,11 @@ class NotesDatabase {
 
     await db.execute('''
     CREATE TABLE Notes(
-      ${NotesImpNames.id} $idType,
-      ${NotesImpNames.pin} $pinType,
-      ${NotesImpNames.title} $textType,
-      ${NotesImpNames.content} $textType,
-      ${NotesImpNames.createTime} $textType
+      ${NoteConstants.id} $idType,
+      ${NoteConstants.pin} $pinType,
+      ${NoteConstants.title} $textType,
+      ${NoteConstants.content} $textType,
+      ${NoteConstants.createTime} $textType
     )
     ''');
   }
@@ -42,41 +41,40 @@ class NotesDatabase {
   Future archNote(Note? note) async {
     final db = await instance.database;
 
-    await db!.update(NotesImpNames.tableName,
-        {NotesImpNames.isArchive: !note!.isArchieve ? 1 : 0},
-        where: '${NotesImpNames.id} = ?', whereArgs: [note.id]);
+    await db!.update(NoteConstants.tableName,
+        {NoteConstants.isArchive: !note!.isArchieve ? 1 : 0},
+        where: '${NoteConstants.id} = ?', whereArgs: [note.id]);
   }
 
   Future pinNote(Note? note) async {
-    // final db = await instance.database;
     final db = await instance.database;
 
     await db!.update(
-        NotesImpNames.tableName, {NotesImpNames.pin: !note!.pin ? 1 : 0},
-        where: '${NotesImpNames.id} = ?', whereArgs: [note.id]);
+        NoteConstants.tableName, {NoteConstants.pin: !note!.pin ? 1 : 0},
+        where: '${NoteConstants.id} = ?', whereArgs: [note.id]);
   }
 
-  Future<Note> InsertEntry(Note notes) async {
-    final db = await instance.database;
-    final String id =
-        (await db!.insert(NotesImpNames.tableName, notes.toJson())) as String;
-    log(id.toString() + "inInsertEntery");
-    return notes.copy(id: id);
-  }
+  // Future<Note> InsertEntry(Note notes) async {
+  //   final db = await instance.database;
+  //   final String id =
+  //       (await db!.insert(NoteConstants.tableName, notes.toJson())) as String;
+  //   log(id.toString() + "inInsertEntery");
+  //   return notes.copy(id: id);
+  // }
 
   Future<List<Note>> readAllNotes() async {
     final db = await instance.database;
-    const orderBy = '${NotesImpNames.createTime} ASC';
+    const orderBy = '${NoteConstants.createTime} ASC';
     final queryResult =
-        await db!.query(NotesImpNames.tableName, orderBy: orderBy);
+        await db!.query(NoteConstants.tableName, orderBy: orderBy);
 
     return queryResult.map((json) => Note.fromJson(json)).toList();
   }
 
   Future<Note?> findNoteById(int id) async {
     final db = await instance.database;
-    final map = await db!.query(NotesImpNames.tableName,
-        where: '${NotesImpNames.id} = ?', whereArgs: [id]);
+    final map = await db!.query(NoteConstants.tableName,
+        where: '${NoteConstants.id} = ?', whereArgs: [id]);
     if (map.isNotEmpty) {
       return Note.fromJson(map.first);
     } else {
@@ -87,29 +85,23 @@ class NotesDatabase {
   Future updateNote(Note note) async {
     log(note.id.toString());
     final db = await instance.database;
-
     await db!.update("Notes", {"title": note.title, "content": note.content},
-        where: '${NotesImpNames.id}=?', whereArgs: [note.id]);
-    // debugPrint(note.toString());
+        where: '${NoteConstants.id}=?', whereArgs: [note.id]);
     log('note updated');
   }
 
   Future delteNote(String? id) async {
     final db = await instance.database;
-
-    await db!.delete((NotesImpNames.tableName),
-        where: '${NotesImpNames.id} = ?', whereArgs: [id]);
+    await db!.delete((NoteConstants.tableName),
+        where: '${NoteConstants.id} = ?', whereArgs: [id]);
   }
-
-///////
-  ///
 
   Future<List<int>?> getNotesString(String element) async {
     if (element != "") {
       String searchString = element.trim();
       log(searchString + "hai");
       final db = await instance.database;
-      final result = await db!.query(NotesImpNames.tableName);
+      final result = await db!.query(NoteConstants.tableName);
 
       List<int> resultList = [];
 
@@ -117,7 +109,6 @@ class NotesDatabase {
         if (element["title"].toString().toLowerCase().contains(searchString) ||
             element["content"].toString().contains(searchString)) {
           resultList.add(element["id"] as int);
-          // log(element.toString());
         }
       });
 

@@ -1,35 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:googlesineintry/screens/keep-notes/note_screen.dart';
+import 'package:googlesineintry/screens/keep-notes/create_update_note.dart';
 
 import '../../models/note.dart';
 
-class TextContainer extends StatelessWidget {
-  final String heading;
-  final String note;
+class NoteCell extends StatelessWidget {
+  //
 
-  final int index;
+  final Note note;
+  final Function onTap;
 
-  Note noteData;
-
-  TextContainer(
-      {Key? key,
-      required this.heading,
-      required this.note,
-      required this.index,
-      required this.noteData})
+  NoteCell({Key? key, required this.note, required this.onTap})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => NoteView(
-                      note: noteData,
-                    )));
-      },
+      onTap: () => onTap(),
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
@@ -38,7 +24,7 @@ class TextContainer extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(heading,
+            Text(note.title!,
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -47,7 +33,9 @@ class TextContainer extends StatelessWidget {
               height: 10,
             ),
             Text(
-              note.length > 250 ? "${note.substring(0, 250)}..." : note,
+              note.content.length > 250
+                  ? "${note.content.substring(0, 250)}..."
+                  : note.content,
               style: const TextStyle(color: Colors.white),
             )
           ],
@@ -56,8 +44,6 @@ class TextContainer extends StatelessWidget {
     ); //
   }
 }
-
-
 
 ////
 ///

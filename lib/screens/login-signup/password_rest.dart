@@ -1,9 +1,7 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 
 import 'package:googlesineintry/resorces/authentication.dart';
-// import 'package:googlesineintry/screens/loginscree.dart';
+
 import 'package:googlesineintry/widgets/login-signup/textfeldInput.dart';
 
 import 'login_scree.dart';
@@ -60,10 +58,6 @@ class _PasswordResetState extends State<PasswordReset> {
       await AuthMethods.resetPassword(emailController.text, context);
 
       Navigator.pop(context);
-
-      //   Navigator.push(
-      //       context, MaterialPageRoute(builder: (context) => const LoginIn()));
-      // }
     } catch (err) {
       showError(err.toString(), true);
     }

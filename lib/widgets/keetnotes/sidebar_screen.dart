@@ -25,7 +25,14 @@ class SideBar extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.person),
               title: const Text('Archive'),
-              onTap: () => null, //////////
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => const ArchiveScreen(),
+                  ),
+                );
+              }, //////////
             ),
             ListTile(
               leading: const Icon(Icons.share),

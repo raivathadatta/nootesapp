@@ -2,21 +2,26 @@
 
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import 'package:googlesineintry/resorces/authentication.dart';
-import 'package:googlesineintry/screens/keep-notes/createnotes_view.dart';
+import 'package:googlesineintry/resorces/notification_managers.dart';
+// import 'package:googlesineintry/screens/keep-notes/create_note.dart';
 import 'package:googlesineintry/widgets/keetnotes/sidebar_screen.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:googlesineintry/thems.dart';
 
 import '../models/note.dart';
-// import '../models/note_model.dart';
+
+import '../resorces/firebase_storage.dart';
 import '../resorces/local_data_bace.dart';
+import '../widgets/keetnotes/gridview_creator.dart';
 import '../widgets/keetnotes/search_bar.dart';
 
-import '../widgets/keetnotes/textcontainer.dart';
-import 'keep-notes/note_screen.dart';
-import 'keep-notes/searchview_screen.dart';
+import '../widgets/keetnotes/note_cell.dart';
+import 'keep-notes/create_update_note.dart';
+import 'keep-notes/search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -26,80 +31,75 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool isLoading = false;
-  List<Note> notesList = [];
-  List<Note> notelist = [];
-  // List<Note> pinList = [];
+  bool loaded = false;
+
+  List<Note> pinList = []; //////////pinList
   GlobalKey<ScaffoldState> drawerKey = GlobalKey();
 
-  static bool isView = true;
+  bool isGridView = isTrue;
+
+  List<Note> listpagination = [];
+  bool allLoaded = false;
+
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
+    NotificationManager().createNotification();
     super.initState();
-    // createEntry(Note(
-    //   pin: false,
-    //   title: "one",
-    //   content: "This iss int the content section",
-    //   createdTime: DateTime.now(),
-    // ));
-    // getAllNotes();
-
-    getAllNotesDATABACE();
-  }
-
-  /////////////////////notable to add pinn and archive
-
-  Future createEntry(Note note) async {
-    await NotesDatabase.instance.InsertEntry(note);
-  }
-
-  Future getAllNotesDATABACE() async {
-    List<Note> newl = await AuthMethods.getAllNotesFromFireStore();
-    log('////////////////////////////////////////');
-    log(newl.length.toString());
     setState(() {
-      notesList = newl;
+      loaded = true;
     });
-    /////////////////////////////////////
-    // notesList.forEach((element) {
-    //   if (element.pin) {
-    //     pinList.add(element);
-    //   }
-    // });
-    ///////////////////////////////////////
-    notesList.forEach((element) {
-      if (!element.pin) {
-        notelist.add(element);
+    getAllNotesPagination();
+    setState(() {
+      loaded = false;
+    });
+    //  inislizing the notifications
+    _scrollController.addListener(() {
+      log("in more list");
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent &&
+          !loaded) {
+        getmoreList();
+        log("in more list end");
       }
     });
   }
 
-  Future getAllNotes() async {
-    notesList = await NotesDatabase.instance.readAllNotes();
-
-    // setState(() {
-    //   isLoading = false;
-    // });
-  }
-
-  Future findNodeById(int id) async {
-    await NotesDatabase.instance.findNoteById(id);
-  }
-
-  Future updateOneNote(Note note) async {
-    await NotesDatabase.instance.updateNote(note);
-  }
-
-  Future deleteNote(Note note) async {
-    if (note.id != null) {
-      await NotesDatabase.instance.delteNote(note.id.toString());
+  Future getmoreList() async {
+    if (allLoaded) {
+      return;
     }
+    try {
+      List<Note> newList = await FireBaseStorage().getMoreNotesFromFB();
+      log(newList.length.toString() + "llllllllllllllllllllll");
+      if (newList.length < 10) {
+        allLoaded = true;
+        // loaded = true;
+      }
+      listpagination.addAll(newList);
+      log(listpagination.length.toString() + "kkkkkk");
+      setState(() {});
+    } catch (e) {
+      if (e.toString() == "theendlist") {
+        allLoaded = true;
+      }
+    }
+  }
+
+  Future getAllNotesPagination() async {
+    List<Note> newList = await FireBaseStorage().getAllNotesPagination();
+    if (newList.length < 10) {
+      allLoaded = true;
+    }
+    setState(() {
+      listpagination = newList;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
+    return loaded
         ? const Scaffold(
             backgroundColor: bgColor,
             body: Center(
@@ -113,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const CreateNoteView()));
+                        builder: (context) => CreateUpdateNote()));
               },
               backgroundColor: cardColor,
               child: const Icon(
@@ -125,168 +125,85 @@ class _HomeScreenState extends State<HomeScreen> {
             endDrawerEnableOpenDragGesture: true,
             backgroundColor: bgColor,
             drawer: const SideBar(),
+            appBar: searchBar(),
             body: RefreshIndicator(
               onRefresh: () {
-                return Future.delayed(Duration(seconds: 1), () {
+                return Future.delayed(const Duration(seconds: 0), () {
                   setState(() {});
                 });
               },
               child: SafeArea(
                   child: Column(
                 children: [
-                  searchBar(), ///////////////////set in appbar
-                  // listSectionAll(),
-
-                  // pinList.isNotEmpty
-                  //     ? !isView
-                  //         ? Expanded(child: listSectionAll())
-                  //         : Expanded(child: noteSectionAll(pinList))
-                  //     : Expanded(child: noteSectionAll(pinList)),
-
-                  Expanded(
-                      child:
-                          !isView ? listSectionAll() : noteSectionAll(notelist))
+                  const SizedBox(
+                    height: 100,
+                  ),
+                  Expanded(child: noteDisplay(listpagination))
                 ],
               )),
             ));
   }
 
-///////////////////////////////////////////////////////////////////////////////////////////////
-  noteSectionAll(List<Note> list) {
-    return Padding(
-      padding: const EdgeInsets.all(0),
-      child: StaggeredGridView.countBuilder(
-          // controller: ,
-          // physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: notesList.length,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          crossAxisCount: 4,
-          staggeredTileBuilder: (index) => StaggeredTile.fit(2),
-          itemBuilder: (context, index) => TextContainer(
-                heading: notelist[index].title!,
-                index: index,
-                note: notelist[index].content,
-                noteData: notesList[index],
-              )),
+//note grid view
+  noteDisplay(List<Note> list) {
+    log(list.length.toString() + "list length");
+
+    return GridViewCreater(
+      scrollController: _scrollController,
+      isGridView: isGridView,
+      list: list,
     );
   }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  listSectionAll() {
-    return ListView.builder(
-      itemCount: notesList.length,
-      itemBuilder: (BuildContext context, int index) {
-        return TextContainer(
-          heading: notesList[index].title!,
-          index: index,
-          note: notesList[index].content,
-          noteData: notesList[index],
-        );
-      },
-    );
-  }
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// search bar///////////////////
   searchBar() {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.only(right: 10),
-          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 1),
-          height: 55,
-          decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: const [
-                BoxShadow(color: Colors.black, spreadRadius: 1, blurRadius: 3),
-              ]),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  IconButton(
-                      onPressed: () => drawerKey.currentState!
-                          .openDrawer(), //.currentState!.openDrawer();
-                      //
-                      icon: Icon(
-                        Icons.menu,
-                        color: Colors.white.withOpacity(0.3),
-                      )),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  InkWell(
-                    onTap: (() {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SearchView()));
-                    }),
-                    child: SizedBox(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Search or notes",
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
-                        ],
-                      ),
-                      height: 65,
-                      width: 190,
-                    ),
+    return AppBar(
+      backgroundColor: bgColor,
+      leading: IconButton(
+          onPressed: () => drawerKey.currentState!
+              .openDrawer(), //.currentState!.openDrawer();
+          //
+          icon: Icon(
+            Icons.menu,
+            color: Colors.white.withOpacity(0.3),
+          )),
+      title: TextButton(
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const SearchScreen()));
+          },
+          child: const Text(
+            "Search or note",
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          )),
+      actions: [
+        TextButton(
+            onPressed: () {
+              setState(() {
+                isGridView = !isGridView;
+              });
+            }, //add  code
+
+            style: ButtonStyle(
+                overlayColor: MaterialStateColor.resolveWith(
+                    (states) => Colors.white.withOpacity(0.1)),
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50.0)),
+                )),
+            child: isGridView
+                ? const Icon(
+                    Icons.grid_view,
+                    color: Colors.white,
                   )
-                ],
-              ),
-
-              ///row 2
-              ///
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 0),
-                child: Row(
-                  children: [
-                    TextButton(
-                        onPressed: () {
-                          /////////////////////////////////////add hear
-                          setState(() {
-                            isView = !isView ? true : false;
-                          });
-                        }, //add  code
-
-                        style: ButtonStyle(
-                            overlayColor: MaterialStateColor.resolveWith(
-                                (states) => Colors.white.withOpacity(0.1)),
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50.0)),
-                            )),
-                        child: isView
-                            ? const Icon(
-                                Icons.grid_view,
-                                color: Colors.white,
-                              )
-                            : Icon(
-                                Icons.list_alt,
-                                color: white,
-                              )),
-                    const SizedBox(
-                      width: 2,
-                    ),
-                  ],
-                ),
-              ),
-              const CircleAvatar(
-                radius: 16,
-                backgroundColor: Colors.white,
-              )
-            ],
-          ),
-        )
-      ], //flutter sear bar
+                : const Icon(
+                    Icons.list_alt,
+                    color: white,
+                  )),
+        const SizedBox(
+          width: 2,
+        ),
+      ],
     );
   }
 }

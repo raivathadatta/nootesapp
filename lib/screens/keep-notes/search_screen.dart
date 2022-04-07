@@ -5,58 +5,57 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:googlesineintry/models/note.dart';
-import 'package:googlesineintry/resorces/authentication.dart';
+
 import 'package:googlesineintry/thems.dart';
-import 'package:googlesineintry/widgets/login-signup/textfeldInput.dart';
 
 import '../../resorces/commonfunctions.dart';
-import '../../resorces/local_data_bace.dart';
-import 'note_screen.dart';
 
-class SearchView extends StatefulWidget {
-  const SearchView({Key? key}) : super(key: key);
+import 'create_update_note.dart';
+
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({Key? key}) : super(key: key);
 
   @override
-  State<SearchView> createState() => _SearchViewState();
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchViewState extends State<SearchView> {
+class _SearchScreenState extends State<SearchScreen> {
   // get textEditingController => null;
   // List<int> searchResultIDs = [];
   List<Note?> searchResultNotes = [];
   List<Note> notesList = [];
 
   bool isLoading = false;
-  // List<Note?> SearchResultNotesLocal = [];
+
+  int get limit => 20;
 
   @override
   void initState() {
-    searchResultNotes.clear(); // TODO: implement initState
+    searchResultNotes.clear();
     super.initState();
-    DataBaseFunctionalty.getAllNodes().then((value) {
+    isLoading = true;
+    DataBaseFunctionalty.getAllNodes(limit).then((value) {
       setState(() {
         notesList = value;
+        isLoading = false;
       });
     });
   }
-  // final searchController = TextEditingController();
 
-// listId = ;
-  void searchResults(String searValue) async {
+  void searchResults(String searchValue) async {
     searchResultNotes.clear();
-
-    if (searValue != "") {
+    log(searchResultNotes.length.toString() + "////////////////////");
+    log(searchValue.toString());
+    if (searchValue != "") {
       notesList.forEach((item) {
-        if (item.title!.contains(searValue) ||
-            item.content.contains(searValue)) {
-          log(item.title!);
-          setState(() {
-            searchResultNotes.add(item);
-            log(searchResultNotes.length.toString());
-          });
+        if (item.title!.contains(searchValue) ||
+            item.content.contains(searchValue)) {
+          searchResultNotes.add(item);
+          log(searchResultNotes.length.toString() + "hhhhhhhhhhhhhhh");
         }
       });
     }
+    setState(() {});
   }
 
   @override
@@ -94,7 +93,7 @@ class _SearchViewState extends State<SearchView> {
                         ),
                         onChanged: (value) {
                           searchResults(value.toLowerCase().trim());
-                          log(value);
+                          // log(value);
                         },
                       ),
                     ),
@@ -133,8 +132,8 @@ class _SearchViewState extends State<SearchView> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  NoteView(note: searchResultNotes[index]!)));
+                              builder: (context) => CreateUpdateNote(
+                                  note: searchResultNotes[index]!)));
                     },
                     child: Container(
                       padding: const EdgeInsets.all(10),
